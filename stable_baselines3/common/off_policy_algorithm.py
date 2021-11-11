@@ -333,6 +333,7 @@ class OffPolicyAlgorithm(BaseAlgorithm):
         tb_log_name: str = "run",
         eval_log_path: Optional[str] = None,
         reset_num_timesteps: bool = True,
+        render: Optional[bool] = False,
     ) -> "OffPolicyAlgorithm":
 
         total_timesteps, callback = self._setup_learn(
@@ -357,6 +358,7 @@ class OffPolicyAlgorithm(BaseAlgorithm):
                 learning_starts=self.learning_starts,
                 replay_buffer=self.replay_buffer,
                 log_interval=log_interval,
+                render=render,
             )
 
             if rollout.continue_training is False:
@@ -518,6 +520,7 @@ class OffPolicyAlgorithm(BaseAlgorithm):
         action_noise: Optional[ActionNoise] = None,
         learning_starts: int = 0,
         log_interval: Optional[int] = None,
+        render: Optional[bool] = False,
     ) -> RolloutReturn:
         """
         Collect experiences and store them into a ``ReplayBuffer``.
@@ -569,6 +572,8 @@ class OffPolicyAlgorithm(BaseAlgorithm):
 
                 # Rescale and perform action
                 new_obs, reward, done, infos = env.step(action)
+                if render:
+                    env.render()
 
                 self.num_timesteps += 1
                 episode_timesteps += 1

@@ -132,6 +132,7 @@ class OnPolicyAlgorithm(BaseAlgorithm):
         callback: BaseCallback,
         rollout_buffer: RolloutBuffer,
         n_rollout_steps: int,
+        render: Optional[bool] = False,
     ) -> bool:
         """
         Collect experiences using the current policy and fill a ``RolloutBuffer``.
@@ -176,6 +177,8 @@ class OnPolicyAlgorithm(BaseAlgorithm):
                 clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
 
             new_obs, rewards, dones, infos = env.step(clipped_actions)
+            if render:
+                env.render()
 
             self.num_timesteps += env.num_envs
 
@@ -223,6 +226,7 @@ class OnPolicyAlgorithm(BaseAlgorithm):
         tb_log_name: str = "OnPolicyAlgorithm",
         eval_log_path: Optional[str] = None,
         reset_num_timesteps: bool = True,
+        render: Optional[bool] = False,
     ) -> "OnPolicyAlgorithm":
         iteration = 0
 
@@ -234,7 +238,10 @@ class OnPolicyAlgorithm(BaseAlgorithm):
 
         while self.num_timesteps < total_timesteps:
 
-            continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+            continue_training = self.collect_rollouts(self.env, callback,
+                                                      self.rollout_buffer,
+                                                      n_rollout_steps=self.n_steps,
+                                                      render=render)
 
             if continue_training is False:
                 break

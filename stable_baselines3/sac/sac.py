@@ -286,6 +286,7 @@ class SAC(OffPolicyAlgorithm):
         tb_log_name: str = "SAC",
         eval_log_path: Optional[str] = None,
         reset_num_timesteps: bool = True,
+        render: Optional[bool] = False,
     ) -> OffPolicyAlgorithm:
 
         return super(SAC, self).learn(
@@ -298,6 +299,7 @@ class SAC(OffPolicyAlgorithm):
             tb_log_name=tb_log_name,
             eval_log_path=eval_log_path,
             reset_num_timesteps=reset_num_timesteps,
+            render=render,
         )
 
     def _excluded_save_params(self) -> List[str]:
